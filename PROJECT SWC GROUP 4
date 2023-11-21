@@ -1,0 +1,356 @@
+/*                       SWC1323 GROUP ASSIGNMENT
+	Filename : HighSchoolStarlightStudentRecordManagementSystem.cpp
+
+	Programmers' name :
+	1) MUHAMMAD IRHAM FIRDAUS BIN AMRAN [AM2307013904]
+	2) RAJA MUHAMMAD HAZIQ HAIY BIN RAJA AZNOOR [AM2307013958]
+	3) MUHAMMAD SALMAN FARIS BIN MUHAMMAD FAISHAL [AM2307014204]
+	4) MUHAMMAD IZ'AAN NA'IM BIN MOHD ARIFIN [AM2307013885]
+	5) MUHAMMAD MAZIZI BIN MAZLAN [AM2307013954]
+	
+	Program Description : This program used to effeciently organize and manage student information in a program, makin it valuable tool for tasks involving student data management
+
+	Date : 20 November 2023
+*/
+
+//header files
+#include <iostream>
+#include <math.h>
+#include <algorithm>
+#include <iomanip>
+using namespace std;
+
+// --Declare all function prototypes--
+
+//Muhammad Irham Firdaus's function prototype
+void inputStudentData(int studentSize,int currentIndex, int studentID[], int attendance[], string studentName[], double scores[]);
+
+//Raja Muhammad Haziq's function prototype
+double calculateAverageScores(int studentSize, double scores[]);
+
+//Muhammad Salman Faris's function prototype
+int findIndexHighestScore(int studentSize, double scores[]);
+int findIndexlowestScore(int studentSize, double scores[]);
+
+//Muhammad Mazizi's function prototype
+void displayStudentRecords(int studentSize, int studentID[], int attendance[], string studentName[], double scores[], double averageScores);
+
+//Muhammad Irham Firdaus's function prototype
+void sortingFunction( int studentID[], string studentName[], double scores[], int studentSize);
+
+
+//Muhammad Iz'aan Na'im's main function
+int main(){ //header main
+	
+	//declare all variables
+	int studentSize = 0,  maxStudent = 5000, studentID[maxStudent], attendance[maxStudent], indexHighScore, indexLowScore, currentIndex = 0, addStudentNum;
+	string studentName[maxStudent];
+	double scores[maxStudent], averageScores;
+	char addDecision, highOrLowOrBoth, sortDecision;
+	
+	cout << "=====================================================\n";
+	cout << "  WELCOME TO STARLIGHT HIGH SCHOOL STUDENT RECORDS   \n";
+	cout << "=====================================================\n\n";
+	
+	//--Muhammad Irham Firdaus bin Amran--
+	do{ //do the code at least once
+		if(studentSize!=0){ //if student records already exist, then the code will run
+			cout << "Please enter the number of students: "; //ask for user to enter number of students
+			cin >> addStudentNum; //user enter additional student records
+	
+			//error handling
+			while(addStudentNum < 0){ 
+				cout << "Invalid input. Please enter again: " << endl; //error message
+				cin >> addStudentNum; //user need to enter the number of students again
+			} //end of while
+			
+			currentIndex = studentSize; //if there are no previous student records, then current number of students= previous number of student
+			studentSize += addStudentNum; //total number of student = previous number of student + new students record
+		}else{
+			studentSize = 50; //assume the number of students = 50 if no previous records
+		} 
+		
+		//inputStudentData function call [Muhammad Irham Firdaus bin Amran]
+		inputStudentData(studentSize, currentIndex, studentID, attendance, studentName, scores);
+		
+		//calculateAverageScores funtion call [Raja Muhammad Haziq Haiy bin Raja Aznoor]
+		averageScores = calculateAverageScores(studentSize, scores);
+		cout << endl;
+		
+		//displayStudentRecords function call [Muhammad Mazizi bin Mazlan]
+		displayStudentRecords(studentSize, studentID, attendance, studentName, scores, averageScores);
+		
+		//--Muhammad Salman Faris bin Muhammad Faishal--
+		// ask the user to choose one of the following to display
+		cout << "H - HIGHEST SCORE\n";
+		cout << "L - LOWEST SCORE\n";
+		cout << "B - BOTH ABOVE\n";
+		cout << "Choose which score you want to display: ";
+		cin >> highOrLowOrBoth; //user need to enter the choice either one above
+		
+		//error handling
+		while(highOrLowOrBoth !='H' && highOrLowOrBoth !='h' && highOrLowOrBoth !='L' && highOrLowOrBoth !='l' && highOrLowOrBoth !='B' && highOrLowOrBoth !='b'){
+			cout << "Invalid input. Please enter again: " << endl; //error message
+			cin >> highOrLowOrBoth; //user need to enter the choice again
+		} //end of while
+		
+		if(highOrLowOrBoth =='H' || highOrLowOrBoth =='h'){ //if user enter H character
+			//findIndexHighestScore funtion call
+			indexHighScore = findIndexHighestScore (studentSize, scores); 
+
+			//display both student records with HighestScore 
+			cout<< "\n\n-----------------------------Student with highest score--------------------------------\n";
+			cout<< "Student ID:"<< studentID[indexHighScore]<<"\n";
+			cout<< "Student Name:"<< studentName[indexHighScore]<<"\n";
+			cout<< "Student Score:"<< scores[indexHighScore]<<" (%)\n\n\n";
+		}else if(highOrLowOrBoth =='L' || highOrLowOrBoth =='l'){ //if user enter L character
+			//findIndexlowestScore function call
+			indexLowScore = findIndexlowestScore(studentSize,scores);
+			
+			//display both student records with lowestScore
+			cout<< "\n-----------------------------Student with lowest score--------------------------------\n";
+			cout<< "Student ID:"<< studentID[indexLowScore]<<"\n";
+			cout<< "Student Name:"<< studentName[indexLowScore]<<"\n";
+			cout<< "Student Score:"<< scores[indexLowScore]<<" (%)\n \n \n";
+		}else{ //if user enter B character
+			//findIndexHighestScore and findIndexlowestScore function call
+			indexHighScore = findIndexHighestScore (studentSize, scores);
+			
+			//display both student records with HighestScore and lowestScore
+			cout<< "-----------------------------Student with highest score--------------------------------\n";
+			cout<< "Student ID:"<< studentID[indexHighScore]<<"\n";
+			cout<< "Student Name:"<< studentName[indexHighScore]<<"\n";
+			cout<< "Student Score:"<< scores[indexHighScore]<<" (%)\n\n\n";
+			
+			indexLowScore = findIndexlowestScore(studentSize,scores);
+			cout<< "-----------------------------Student with lowest score--------------------------------\n";
+			cout<< "Student ID:"<< studentID[indexLowScore]<<"\n";
+			cout<< "Student Name:"<< studentName[indexLowScore]<<"\n";
+			cout<< "Student Score:"<< scores[indexLowScore]<<" (%)\n \n \n";
+		}
+		//--Muhammad Irham Firdaus bin Amran--
+		//ask if user want to sort the data records or not
+		cout << "\n\nY - YES" << endl; 
+		cout << "N - NO" << endl;
+		cout << "Do you want to sort student list? : " ;
+		cin >> sortDecision; //user enter the decision
+		
+		//error handling
+		while(sortDecision !='Y' && sortDecision !='y' && sortDecision !='N' && sortDecision !='n'){ 
+			cout << "Invalid input. Please enter again: " ; //error message
+			cin >> sortDecision; //user need to enter the decision again
+		}
+		if(sortDecision == 'Y' || sortDecision == 'y' ){ //if the user enter Y character
+				//sorting function call
+				sortingFunction(studentID, studentName, scores, studentSize);
+		}
+		
+		//ask if user want to add more students data records or not
+		cout << "\n\nY - YES" << endl;
+		cout << "N - NO (AUTOMATICALLY EXIT)" << endl;
+		cout << "Do you want to add more student data? " ;
+		cin >> addDecision; //user need to enter the decision
+		
+		//error handling
+		while(addDecision !='Y' && addDecision !='y' && addDecision !='N' && addDecision !='n'){
+			cout << "Invalid input. Please enter again: " ; //error message
+			cin >> addDecision; //user need to enter the decision again
+		}
+		//clear the screen after user enter the decision
+		system("CLS"); 
+	}while(addDecision == 'Y' || addDecision == 'y' ); //the code loops when user enter Y
+	
+	cout << "==========================================================================" << endl;
+	cout << "         THANKS FOR USING STARLIGHT HIGH SCHOOL STUDENT RECORDS           " << endl;
+	cout << "==========================================================================" << endl;
+
+	return 0;
+} //end of main
+
+//--Muhammad Irham Firdaus bin Amran--
+//inputStudentData function definition 
+void inputStudentData(int studentSize,int currentIndex, int studentID[], int attendance[], string studentName[], double scores[])
+{
+	for(int i= currentIndex; i<studentSize; i++){
+		
+		cout << "----------------------------" << endl;
+		cout << "\tSTUDENT " << i+1 << endl;
+		cout << "----------------------------" << endl;
+		
+		//ask the user to enter student ID
+		cout << "Please input student ID: ";
+		cin >> studentID[i]; //user enter the student ID
+		
+		//ask the user to enter student name
+		cout << "Please input student name: ";
+		cin.ignore();
+		getline(cin,  studentName[i]); //user enter the student name
+		
+		//ask the user to enter student's attendance
+		cout << "Please input student's attendance (%): ";
+		cin >> attendance[i]; //user enter the attendance
+		
+		//error handling
+		while (attendance[i] < 0 || attendance[i] > 100){
+			cout << "Invalid input. Please enter again : "; //error message
+			cin >> attendance[i]; //user need to enter the student's attendance again
+		}
+		
+		//ask user to enter student's scores
+		cout << "Please input student's scores (%): ";
+		cin >> scores[i]; //user enter the score
+		
+		//error handling
+		while (scores[i] < 0 || scores[i] > 100){
+			cout << "Invalid input. Please enter again : "; //error message
+			cin >> scores[i]; //user need to enter the student's score again
+		}
+		
+		cout << endl << endl;
+	}
+}
+
+//--Raja Muhammad Haziq Haiy bin Raja Aznoor--
+//calculateAverageScores function definition
+double calculateAverageScores(int studentSize,double scores[]) {
+	//declare all the variables
+    double averageScores = 0;
+    double total = 0;
+    
+    for(int i = 0; i < studentSize; i++) {
+        total += scores[i]; //total scores of every students = score[0] + score[1] + score[3] and so on
+    }
+    
+	averageScores = total / studentSize; //calculate the average score of all students
+    
+    return averageScores;
+}
+
+//--Muhammad Mazizi bin Mazlan--
+//displayStudentRecords function definition
+void displayStudentRecords(int studentSize, int studentID[], int attendance[], string studentName[], double scores[], double averageScores){
+	int i;
+	cout<<" ------------------------------------------------------------------------------------------------------------------ \n";
+	cout<<"|     Student ID     |    Score  |  Attendance(%)|                Student Name                                      \n";
+	cout<<" ------------------------------------------------------------------------------------------------------------------ \n";
+	
+	for( int i = 0; i < studentSize; i++){
+		cout<<"| "<<studentID[i]<<"\t\t     | \t "<< fixed << setprecision(2) << scores[i]<<"\t |\t "<<attendance[i]<<" \t |\t"<<studentName[i]<<" \n";	
+	}
+	cout<<"------------------------------------------------------------------------------------------------------------------- \n\n";
+	cout << " ------------------------------------------------------ \n";
+	cout << " Students' average score is " << averageScores << " % " << endl;
+	cout << " ------------------------------------------------------ \n\n";
+}
+
+//--Muhammad Salman Faris bin Muhammad Faishal--
+//findIndexHighestScore funtion definition
+int findIndexHighestScore(int studentSize,double scores[] ){
+	int indexHighScore = 0; //set the highest index scores = 0 because set the first student score the highest in order to compare with the subsequence score 
+	
+	for(int i = 0; i <studentSize; ++i) { //loop through the student scores 
+		if(scores[i] >scores[indexHighScore]){ // and compare the current index score is bigger than score of indexHighscore
+			indexHighScore = i; //if through set the index high score to the current index 
+		}// 
+	}
+	
+	// return the final index of student with highest score
+	return indexHighScore;  
+}
+//findIndexlowestScore function definition
+int findIndexlowestScore(int studentSize, double scores[] ){
+	int indexLowScore = 0; //set the lowest index scores = 0 because set the first student score the lowest in order to compare with the subsequence score
+	
+	for(int i = 0; i <studentSize; ++i) {//loop through the student scores
+		if(scores[i] <scores[indexLowScore]){// and compare the current index score is lesser than score of indexHighscore
+			indexLowScore = i;//if through set the index low score to the current index
+		}
+	}
+	
+	// return the final index of student with lowest score
+	return indexLowScore; 
+}
+
+//--Muhammad Irham Firdaus bin Amran--
+//sorting function definition
+void sortingFunction( int studentID[], string studentName[], double scores[],int studentSize){
+	int sortDecision, tempID, copyStudentID[studentSize];
+	string tempName, copyStudentName[studentSize];
+	double tempScores, copyScores[studentSize];
+	
+	//assign original array to copy array
+	copy(studentName, studentName  + studentSize, copyStudentName);
+	copy(studentID, studentID  + studentSize, copyStudentID);
+	copy(scores, scores  + studentSize, copyScores);
+	
+	//ask user to enter which category want to sort by
+	cout << "\n\n1 - STUDENT NAME\n";
+	cout << "2 - STUDENT SCORES\n";
+	cout << "Choose which category you want to sort by: ";
+	cin >> sortDecision; //user enter the decision
+	
+	//error handling
+	while(sortDecision !=1 && sortDecision !=2){
+			cout << "Invalid input. Please enter again : ";  //error message
+			cin >> sortDecision; //user enter the decision again
+	}
+	
+	//duplicate arrays (the original student records will stay original)
+	for(int i =0; i<studentSize; i++){
+		for(int j=i+1; j<studentSize; j++){
+			if(sortDecision==1){ //if user enter 1
+				if(copyStudentName[i]>copyStudentName[j]){
+					//swap the name
+					tempName = copyStudentName[i];
+					copyStudentName[i] = copyStudentName[j];
+					copyStudentName[j] = tempName;
+					
+					//swap the student id
+					tempID = copyStudentID[i];
+					copyStudentID[i] = copyStudentID[j];
+					copyStudentID[j] = tempID;			
+					
+					//swap the scores
+					tempScores = copyScores[i];
+					copyScores[i] = copyScores[j];
+					copyScores[j] = tempScores;
+				}
+			}else{ //if user enter 2
+				if(copyScores[i]>copyScores[j]){
+					//swap the name
+					tempName = copyStudentName[i];
+					copyStudentName[i] = copyStudentName[j];
+					copyStudentName[j] = tempName;
+					
+					//swap the student id
+					tempID = copyStudentID[i];
+					copyStudentID[i] = copyStudentID[j];
+					copyStudentID[j] = tempID;			
+					
+					//swap the scores
+					tempScores = copyScores[i];
+					copyScores[i] = copyScores[j];
+					copyScores[j] = tempScores;
+				}
+			}
+		}
+	}
+	
+	if(sortDecision==1){ 
+		//display the students' records sort by name
+		cout << "\n\n\t\tList of students sort by name \n";
+	}else{
+		//display the students' records sort by name
+		cout << "\n\n\t\tList of students sort by scores \n";
+	}
+	
+	cout<<" --------------------------------------------Student Records------------------------------------------------------- \n";
+	cout<<"|     Student ID     |    Scores  |                              Student Name                                       \n";
+	cout<<" ------------------------------------------------------------------------------------------------------------------ \n";
+	
+	for(int i=0;  i<studentSize; i++){
+		//displays the students' record
+		cout << "| "<< copyStudentID[i] << "\t\t     | \t" << copyScores[i] << "\t |\t" <<copyStudentName[i] << "\t\t"<< endl;
+	}
+	cout << "------------------------------------------------------------------------------------------------------------------\n";
+}
